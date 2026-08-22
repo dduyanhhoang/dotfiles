@@ -10,20 +10,35 @@ locations; this repo holds copies plus one script to move them either way.
 
 ## What's tracked
 
-| Path | Live location |
+| Path | Live location / role |
 |---|---|
-| `powershell/` | `~\Documents\PowerShell\` (profile, execution policy, module list) |
-| `psmux/` | `~\.psmux*.conf`, theme switcher + watcher |
+| `powershell/` | `~\Documents\PowerShell\` — profile, execution policy, `modules.txt` (PSFzf, Terminal-Icons) |
+| `psmux/` | `~\.psmux*.conf` — config, binds, dark/light themes, theme watcher + `.cmd` switcher |
 | `windows-terminal/settings.json` | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_*\LocalState\` |
 | `git/.gitconfig` | `~\.gitconfig` |
-| `scoop/scoopfile.json` | `scoop export` / `scoop import` |
+| `scoop/scoopfile.json` | every scoop app — `scoop export` / `scoop import` |
+| `winget/apps.txt` | winget-only apps (Nerd Font, Terminal, PowerShell 7, PowerToys, Warp) |
+
+CLI tools come from scoop: psmux, oh-my-posh, eza, bat, fzf, fd, ripgrep,
+zoxide, lazygit, neovim, gh, volta, git, 7zip, curl, vscode.
 
 ## New machine
 
-1. Install scoop: `iwr -useb get.scoop.sh | iex`
-2. `git clone <this repo> ~\dotfiles; cd ~\dotfiles; .\sync.ps1 apply`
+```powershell
+iwr -useb get.scoop.sh | iex
+git clone https://github.com/dduyanhhoang/dotfiles ~\dotfiles
+cd ~\dotfiles; .\sync.ps1 apply
+```
 
-`apply` runs `scoop import` (all apps: psmux, oh-my-posh, eza, bat, fzf, fd,
-ripgrep, zoxide, lazygit, neovim, volta, ...) and installs the PowerShell modules.
+`apply` = scoop import + winget installs + `volta install node@24` + PowerShell
+modules + copy every config into place. Restart the terminal after.
 
-Not tracked: secrets, anything under `~/.claude`, `*.bak` files, WT `state.json`.
+Installed by their own installers, not scripted here:
+`irm https://claude.ai/install.ps1 | iex` (Claude Code), `irm https://astral.sh/uv/install.ps1 | iex` (uv).
+
+## Notes
+
+- `winget/apps.txt` is hand-curated on purpose — `winget export` pulls in VCLibs
+  and runtime junk. Add a line when you install something winget-only.
+- `sync.ps1 save` refreshes the scoop and PowerShell-module lists automatically.
+- Not tracked: secrets, anything under `~/.claude`, `*.bak` files, WT `state.json`.

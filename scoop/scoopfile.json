@@ -27,137 +27,144 @@
     ],
     "apps": [
         {
-            "Version": "26.02",
-            "Info": "",
+            "Name": "7zip",
+            "Source": "main",
             "Updated": "2026-08-10T02:00:38.4199896+07:00",
-            "Source": "main",
-            "Name": "7zip"
+            "Info": "",
+            "Version": "26.02"
         },
         {
-            "Version": "0.26.1",
-            "Info": "",
+            "Name": "bat",
+            "Source": "main",
             "Updated": "2026-08-22T12:51:55.3424777+07:00",
-            "Source": "main",
-            "Name": "bat"
+            "Info": "",
+            "Version": "0.26.1"
         },
         {
-            "Version": "1.93.134",
-            "Info": "",
+            "Name": "brave",
+            "Source": "extras",
             "Updated": "2026-08-09T20:14:50.8793413+07:00",
-            "Source": "extras",
-            "Name": "brave"
+            "Info": "",
+            "Version": "1.93.134"
         },
         {
-            "Version": "8.21.0_6",
-            "Info": "",
+            "Name": "curl",
+            "Source": "main",
             "Updated": "2026-08-10T02:00:41.569187+07:00",
-            "Source": "main",
-            "Name": "curl"
+            "Info": "",
+            "Version": "8.21.0_6"
         },
         {
-            "Version": "0.23.5",
-            "Info": "",
+            "Name": "eza",
+            "Source": "main",
             "Updated": "2026-08-22T12:51:55.8389218+07:00",
-            "Source": "main",
-            "Name": "eza"
+            "Info": "",
+            "Version": "0.23.5"
         },
         {
-            "Version": "10.4.2",
-            "Info": "",
+            "Name": "fd",
+            "Source": "main",
             "Updated": "2026-08-22T12:51:56.9599003+07:00",
-            "Source": "main",
-            "Name": "fd"
+            "Info": "",
+            "Version": "10.4.2"
         },
         {
-            "Version": "0.74.3",
-            "Info": "",
+            "Name": "fzf",
+            "Source": "main",
             "Updated": "2026-08-22T12:51:53.9398113+07:00",
-            "Source": "main",
-            "Name": "fzf"
+            "Info": "",
+            "Version": "0.74.3"
         },
         {
-            "Version": "2.55.0.3",
+            "Name": "gh",
+            "Source": "main",
+            "Updated": "2026-08-22T13:18:07.8216476+07:00",
             "Info": "",
+            "Version": "2.98.0"
+        },
+        {
+            "Name": "git",
+            "Source": "main",
             "Updated": "2026-08-09T20:12:38.1078834+07:00",
-            "Source": "main",
-            "Name": "git"
+            "Info": "",
+            "Version": "2.55.0.3"
         },
         {
-            "Version": "151.0.7922.109",
-            "Info": "",
+            "Name": "googlechrome",
+            "Source": "extras",
             "Updated": "2026-08-09T20:23:13.8640429+07:00",
-            "Source": "extras",
-            "Name": "googlechrome"
+            "Info": "",
+            "Version": "151.0.7922.109"
         },
         {
-            "Version": "0.64.1",
-            "Info": "",
+            "Name": "lazygit",
+            "Source": "extras",
             "Updated": "2026-08-22T12:52:20.0617313+07:00",
-            "Source": "extras",
-            "Name": "lazygit"
+            "Info": "",
+            "Version": "0.64.1"
         },
         {
-            "Version": "0.12.4",
-            "Info": "",
+            "Name": "neovim",
+            "Source": "main",
             "Updated": "2026-08-22T12:26:55.744358+07:00",
-            "Source": "main",
-            "Name": "neovim"
+            "Info": "",
+            "Version": "0.12.4"
         },
         {
-            "Version": "30.6.5",
-            "Info": "",
+            "Name": "oh-my-posh",
+            "Source": "main",
             "Updated": "2026-08-22T12:51:53.0457526+07:00",
-            "Source": "main",
-            "Name": "oh-my-posh"
+            "Info": "",
+            "Version": "30.6.5"
         },
         {
-            "Version": "3.3.8",
-            "Info": "",
+            "Name": "psmux",
+            "Source": "main",
             "Updated": "2026-08-22T12:41:42.8897278+07:00",
-            "Source": "main",
-            "Name": "psmux"
+            "Info": "",
+            "Version": "3.3.8"
         },
         {
-            "Version": "15.2.0",
-            "Info": "",
+            "Name": "ripgrep",
+            "Source": "main",
             "Updated": "2026-08-22T12:51:56.4209421+07:00",
-            "Source": "main",
-            "Name": "ripgrep"
+            "Info": "",
+            "Version": "15.2.0"
         },
         {
-            "Version": "3.6.1",
-            "Info": "",
+            "Name": "sumatrapdf",
+            "Source": "extras",
             "Updated": "2026-08-11T19:46:47.8483938+07:00",
-            "Source": "extras",
-            "Name": "sumatrapdf"
+            "Info": "",
+            "Version": "3.6.1"
         },
         {
-            "Version": "14.51.36247.0",
-            "Info": "",
+            "Name": "vcredist2022",
+            "Source": "extras",
             "Updated": "2026-08-22T12:29:09.6077334+07:00",
-            "Source": "extras",
-            "Name": "vcredist2022"
+            "Info": "",
+            "Version": "14.51.36247.0"
         },
         {
-            "Version": "2.0.2",
-            "Info": "",
+            "Name": "volta",
+            "Source": "main",
             "Updated": "2026-08-22T11:56:11.2719202+07:00",
-            "Source": "main",
-            "Name": "volta"
+            "Info": "",
+            "Version": "2.0.2"
         },
         {
-            "Version": "1.133.0",
-            "Info": "",
-            "Updated": "2026-08-12T20:50:09.2499524+07:00",
+            "Name": "vscode",
             "Source": "extras",
-            "Name": "vscode"
+            "Updated": "2026-08-12T20:50:09.2499524+07:00",
+            "Info": "",
+            "Version": "1.133.0"
         },
         {
-            "Version": "0.10.0",
-            "Info": "",
-            "Updated": "2026-08-22T12:51:54.4211563+07:00",
+            "Name": "zoxide",
             "Source": "main",
-            "Name": "zoxide"
+            "Updated": "2026-08-22T12:51:54.4211563+07:00",
+            "Info": "",
+            "Version": "0.10.0"
         }
     ]
 }

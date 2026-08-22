@@ -1,0 +1,7 @@
+# Hand-curated: things scoop doesn't cover. One winget ID per line.
+# NOT auto-generated (a full `winget export` drags in VCLibs/runtime noise).
+DEVCOM.JetBrainsMonoNerdFont   # Windows Terminal font face "JetBrainsMono NFM" - without this: tofu boxes
+Microsoft.WindowsTerminal
+Microsoft.PowerShell
+Microsoft.PowerToys
+Warp.Warp

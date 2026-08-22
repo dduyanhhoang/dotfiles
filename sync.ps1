@@ -38,6 +38,13 @@ if (Get-Command scoop -EA SilentlyContinue) {
   if ($Mode -eq 'save') { scoop export | Set-Content "$repo\scoop\scoopfile.json" }
   else                  { scoop import "$repo\scoop\scoopfile.json" }
 }
+if ($Mode -eq 'apply' -and (Get-Command winget -EA SilentlyContinue)) {
+  Get-Content "$repo\winget\apps.txt" |
+    ForEach-Object { ($_ -replace '#.*').Trim() } | Where-Object { $_ } |
+    ForEach-Object { winget install --id $_ -e --accept-package-agreements --accept-source-agreements }
+}
+if ($Mode -eq 'apply' -and (Get-Command volta -EA SilentlyContinue)) { volta install node@24 }
+
 $modFile = "$repo\powershell\modules.txt"
 if ($Mode -eq 'save') {
   Get-InstalledModule | Select-Object -Expand Name | Sort-Object | Set-Content $modFile
