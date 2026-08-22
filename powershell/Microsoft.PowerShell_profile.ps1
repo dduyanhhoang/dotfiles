@@ -1,9 +1,6 @@
 # ---- prompt ----
 oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\robbyrussell.omp.json" | Invoke-Expression
 
-# ---- modules ----
-Import-Module Terminal-Icons
-
 # ---- readline ----
 Set-PSReadLineOption -EditMode Windows
 try { Set-PSReadLineOption -PredictionSource HistoryAndPlugin -PredictionViewStyle ListView } catch { }  # no VT when redirected
@@ -28,3 +25,11 @@ Set-Alias lg lazygit
 
 $env:FZF_DEFAULT_COMMAND = 'fd --type f --hidden --exclude .git'
 $env:FZF_DEFAULT_OPTS    = '--height 40% --layout=reverse --border'
+
+
+# ---- navigation ----
+function .. { Set-Location .. }
+function ... { Set-Location ../.. }
+function mkcd { param([Parameter(Mandatory)]$Path) New-Item -ItemType Directory -Force $Path | Set-Location }
+function which { (Get-Command @args).Source }
+
