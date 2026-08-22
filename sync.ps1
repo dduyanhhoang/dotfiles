@@ -21,7 +21,6 @@ $map = [ordered]@{
   'psmux/.psmux-theme.cmd'                      = "$HOME\.psmux-theme.cmd"
   'windows-terminal/settings.json'              = $wt
   'git/.gitconfig'                              = "$HOME\.gitconfig"
-  'claude/settings.json'                        = "$HOME\.claude\settings.json"
 }
 
 foreach ($k in $map.Keys) {

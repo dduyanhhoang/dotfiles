@@ -16,7 +16,6 @@ locations; this repo holds copies plus one script to move them either way.
 | `psmux/` | `~\.psmux*.conf`, theme switcher + watcher |
 | `windows-terminal/settings.json` | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_*\LocalState\` |
 | `git/.gitconfig` | `~\.gitconfig` |
-| `claude/settings.json` | `~\.claude\settings.json` |
 | `scoop/scoopfile.json` | `scoop export` / `scoop import` |
 
 ## New machine
@@ -27,4 +26,4 @@ locations; this repo holds copies plus one script to move them either way.
 `apply` runs `scoop import` (all apps: psmux, oh-my-posh, eza, bat, fzf, fd,
 ripgrep, zoxide, lazygit, neovim, volta, ...) and installs the PowerShell modules.
 
-Not tracked: secrets, Claude session/history data, `*.bak` files, WT `state.json`.
+Not tracked: secrets, anything under `~/.claude`, `*.bak` files, WT `state.json`.
