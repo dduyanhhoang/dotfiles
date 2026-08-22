@@ -6,3 +6,6 @@
 [credential "https://gist.github.com"]
 	helper = 
 	helper = !'C:\\Users\\al\\scoop\\apps\\gh\\current\\bin\\gh.exe' auth git-credential
+[user]
+	name = D Duy Anh Hoang
+	email = 137117837+dduyanhhoang@users.noreply.github.com
