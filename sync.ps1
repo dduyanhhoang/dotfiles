@@ -23,6 +23,7 @@ $map = [ordered]@{
   'nvim/'                                       = "$env:LOCALAPPDATA\nvim"
   'windows-terminal/settings.json'              = $wt
   'git/.gitconfig'                              = "$HOME\.gitconfig"
+  'bat/config'                                  = "$HOME\scoop\persist\bat\config"
 }
 
 foreach ($k in $map.Keys) {
