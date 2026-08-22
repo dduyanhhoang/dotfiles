@@ -26,7 +26,7 @@ $map = [ordered]@{
 }
 
 foreach ($k in $map.Keys) {
-  $inRepo = Join-Path $repo $k
+  $inRepo = Join-Path $repo $k.TrimEnd('/')
   $live   = $map[$k]
   $src, $dst = if ($Mode -eq 'save') { $live, $inRepo } else { $inRepo, $live }
   if (-not (Test-Path -LiteralPath $src)) { Write-Warning "missing: $src"; continue }
