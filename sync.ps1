@@ -2,6 +2,7 @@
 <#
   sync.ps1 save   -> copy live config files INTO this repo (run before commit)
   sync.ps1 apply  -> copy repo files OUT to their live locations (new machine)
+  A repo path ending in '/' is a directory and gets mirrored (destination wiped first).
 #>
 param([ValidateSet('save','apply')][string]$Mode = 'save')
 
@@ -19,6 +20,7 @@ $map = [ordered]@{
   'psmux/.psmux-theme-light.conf'               = "$HOME\.psmux-theme-light.conf"
   'psmux/.psmux-theme-watch.ps1'                = "$HOME\.psmux-theme-watch.ps1"
   'psmux/.psmux-theme.cmd'                      = "$HOME\.psmux-theme.cmd"
+  'nvim/'                                       = "$env:LOCALAPPDATA\nvim"
   'windows-terminal/settings.json'              = $wt
   'git/.gitconfig'                              = "$HOME\.gitconfig"
 }
@@ -28,8 +30,14 @@ foreach ($k in $map.Keys) {
   $live   = $map[$k]
   $src, $dst = if ($Mode -eq 'save') { $live, $inRepo } else { $inRepo, $live }
   if (-not (Test-Path -LiteralPath $src)) { Write-Warning "missing: $src"; continue }
-  New-Item -ItemType Directory -Force -Path (Split-Path $dst) | Out-Null
-  Copy-Item -LiteralPath $src -Destination $dst -Force
+  if ($k.EndsWith('/')) {
+    if (Test-Path -LiteralPath $dst) { Remove-Item -Recurse -Force -LiteralPath $dst }
+    New-Item -ItemType Directory -Force -Path (Split-Path $dst) | Out-Null
+    Copy-Item -Recurse -LiteralPath $src -Destination $dst
+  } else {
+    New-Item -ItemType Directory -Force -Path (Split-Path $dst) | Out-Null
+    Copy-Item -LiteralPath $src -Destination $dst -Force
+  }
   Write-Host "$k"
 }
 

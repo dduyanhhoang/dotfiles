@@ -1,4 +1,6 @@
-# dotfiles (Windows)
+| `nvim/` | `%LOCALAPPDATA%\nvim` — kickstart.nvim, relative numbers, telescope searches hidden+gitignored files, `lua/custom/plugins/theme.lua` follows Windows dark/light |
+
+| `git/.gitconfig`# dotfiles (Windows)
 
 Windows equivalent of a Linux dotfiles repo. Config files live in their normal
 locations; this repo holds copies plus one script to move them either way.
@@ -14,10 +16,14 @@ locations; this repo holds copies plus one script to move them either way.
 |---|---|
 | `powershell/` | `~\Documents\PowerShell\` — profile, execution policy, `modules.txt` (PSFzf) |
 | `psmux/` | `~\.psmux*.conf` — config, binds, dark/light themes, theme watcher + `.cmd` switcher |
+| `nvim/` | `%LOCALAPPDATA%\nvim` — kickstart.nvim, relative numbers, telescope searches hidden+gitignored files, `lua/custom/plugins/theme.lua` follows Windows dark/light |
 | `windows-terminal/settings.json` | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_*\LocalState\` |
 | `git/.gitconfig` | `~\.gitconfig` |
 | `scoop/scoopfile.json` | every scoop app — `scoop export` / `scoop import` |
 | `winget/apps.txt` | winget-only apps (Nerd Font, Terminal, PowerShell 7, PowerToys, Warp) |
+
+Neovim needs `mingw` + `make` (treesitter / telescope-fzf-native) — both are in the scoop list.
+Check the theme detector with `nvim --clean -l nvim/theme-check.lua`.
 
 CLI tools come from scoop: psmux, oh-my-posh, eza, bat, fzf, fd, ripgrep,
 zoxide, lazygit, neovim, gh, volta, git, 7zip, curl, vscode.
