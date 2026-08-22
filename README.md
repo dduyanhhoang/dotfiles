@@ -22,7 +22,8 @@ locations; this repo holds copies plus one script to move them either way.
 | `scoop/scoopfile.json` | every scoop app — `scoop export` / `scoop import` |
 | `winget/apps.txt` | winget-only apps (Nerd Font, Terminal, PowerShell 7, PowerToys, Warp) |
 
-Neovim needs `mingw` + `make` (treesitter / telescope-fzf-native) — both are in the scoop list.
+Neovim needs `mingw`, `make` and the `tree-sitter` CLI (parser compilation,
+telescope-fzf-native) — all three are in the scoop list.
 Check the theme detector with `nvim --clean -l nvim/theme-check.lua`.
 
 CLI tools come from scoop: psmux, oh-my-posh, eza, bat, fzf, fd, ripgrep,

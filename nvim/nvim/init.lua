@@ -92,6 +92,11 @@ do
   -- Enable faster startup by caching compiled Lua modules
   vim.loader.enable()
 
+  -- Windows: the tree-sitter CLI compiles parsers with MSVC's `cl.exe` by default.
+  -- Without Visual Studio installed that fails silently (parsers re-download every
+  -- start and never build), so point it at mingw's gcc from scoop.
+  if vim.fn.has 'win32' == 1 and vim.fn.executable 'cl' == 0 and vim.fn.executable 'gcc' == 1 then vim.env.CC = 'gcc' end
+
   -- Set <space> as the leader key
   -- See `:help mapleader`
   --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
