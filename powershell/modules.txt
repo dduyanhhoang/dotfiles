@@ -1,0 +1,2 @@
+PSFzf
+Terminal-Icons
