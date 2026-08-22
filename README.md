@@ -12,7 +12,7 @@ locations; this repo holds copies plus one script to move them either way.
 
 | Path | Live location / role |
 |---|---|
-| `powershell/` | `~\Documents\PowerShell\` — profile, execution policy, `modules.txt` (PSFzf, Terminal-Icons) |
+| `powershell/` | `~\Documents\PowerShell\` — profile, execution policy, `modules.txt` (PSFzf) |
 | `psmux/` | `~\.psmux*.conf` — config, binds, dark/light themes, theme watcher + `.cmd` switcher |
 | `windows-terminal/settings.json` | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_*\LocalState\` |
 | `git/.gitconfig` | `~\.gitconfig` |
