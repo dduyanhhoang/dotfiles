@@ -470,6 +470,22 @@ tmux_conf_uninstall_plugins_on_reload=false
 #set -g @continuum-restore 'on'
 
 
+# -- system dark/light -------------------------------------------------------
+# Same bindings as the psmux side on Windows:
+#   prefix + T     follow the system again (drop the pin)
+#   prefix + M-l   force light and pin
+#   prefix + M-d   force dark and pin
+#
+# The theme has to be applied *after* oh-my-tmux, which sources this file and
+# only then runs _apply_configuration -- a plain 'set -g' here would be
+# overwritten. The client-attached hook fires late enough to win, and the
+# watcher keeps up with changes made while tmux is already running.
+bind T   run-shell -b 'tmux-theme sync'
+bind M-l run-shell -b 'tmux-theme light'
+bind M-d run-shell -b 'tmux-theme dark'
+set-hook -g client-attached 'run-shell -b "tmux-theme force"'
+run-shell -b 'tmux-theme-watch'
+
 # -- custom variables ----------------------------------------------------------
 
 # to define a custom #{foo} variable, define a POSIX shell function between the

@@ -72,10 +72,37 @@ Installed by their own installers, not scripted here:
 |---|---|
 | `linux/bashrc` | `~/.bashrc` -- Oh My Bash (robbyrussell), Windows-PATH filter, CLI hooks |
 | `linux/tmux.conf.local` | `~/.config/tmux/tmux.conf.local` -- Oh my tmux! user config |
+| `linux/tmux/theme-*.conf` | `~/.config/tmux/` -- dark and light palettes, ported from `psmux/` |
+| `linux/bin/system-theme` | `~/.local/bin/` -- one detector shared by tmux and Neovim |
+| `linux/bin/tmux-theme` | `~/.local/bin/` -- applies a palette; the Linux `.psmux-theme.cmd` |
+| `linux/bin/tmux-theme-watch` | `~/.local/bin/` -- polls for system theme changes |
 | `linux/packages.md` | what to install and why -- apt, bob, volta, tree-sitter, uv |
 | `git/gitconfig.linux` | `~/.gitconfig` -- same identity, native `gh` as credential helper |
 
-Two things differ from the Windows side in ways worth knowing:
+### Dark / light
+
+Same bindings as psmux, so the muscle memory carries over:
+
+| | |
+|---|---|
+| `prefix + T` | follow the system again (drop the pin) |
+| `prefix + M-l` | force light and pin |
+| `prefix + M-d` | force dark and pin |
+| `:ThemePin light\|dark` | the same, from inside Neovim (no argument unpins) |
+
+`system-theme` is the only place detection is implemented -- WSL asks the
+Windows registry through `reg.exe`, elsewhere it tries the XDG desktop portal
+(`org.freedesktop.appearance`, so GNOME and KDE both answer) and then GNOME's
+`color-scheme`/`gtk-theme` keys, falling back to dark. A pin lives in
+`~/.local/state/system-theme` and outranks all of it.
+
+tmux picks changes up from `tmux-theme-watch`, which polls every 3s -- the WSL
+signal is a registry value with nothing to subscribe to, so polling is required
+regardless, and it matches what `.psmux-theme-watch.ps1` already does. Neovim
+watches that same state file with `fs_poll`, so `prefix + M-l` retints a pane
+Neovim is already focused in, where `FocusGained` alone would never fire.
+
+### Other differences from Windows
 
 - **Neovim comes from [bob](https://github.com/MordechaiHadad/bob), not apt.**
   This config uses `vim.pack`, which needs Neovim 0.12+; apt ships the 0.11

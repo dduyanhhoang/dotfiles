@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+#
+#   system-theme            -> dark | light, honouring a pin
+#   system-theme --system   -> dark | light, ignoring the pin
+#   system-theme --pin dark|light
+#   system-theme --unpin
+#   system-theme --state    -> raw state file contents (dark|light|pin:dark|pin:light)
+#
+# One detector shared by tmux and Neovim so they can never disagree. The pin
+# lets a manual choice outrank the system for as long as it is set -- the same
+# contract ~/.psmux-theme.state has on the Windows side, so nvim reads either.
+
+set -uo pipefail
+
+STATE=${XDG_STATE_HOME:-$HOME/.local/state}/system-theme
+
+detect() {
+  # 1. WSL: ask Windows. AppsUseLightTheme 0x1 = light, absent/0x0 = dark.
+  #    Only reg.exe resolves -- a bare `reg` is not on the Linux PATH.
+  if [[ -n ${WSL_DISTRO_NAME:-} ]] && command -v reg.exe >/dev/null 2>&1; then
+    local out
+    out=$(reg.exe query 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize' \
+            /v AppsUseLightTheme 2>/dev/null | tr -d '\r')
+    [[ $out == *0x1* ]] && { printf 'light\n'; return; }
+    [[ $out == *0x0* ]] && { printf 'dark\n';  return; }
+  fi
+
+  # 2. XDG desktop portal -- the cross-desktop standard, works on GNOME, KDE
+  #    and anything else implementing org.freedesktop.appearance.
+  #    color-scheme: 0 = no preference, 1 = prefer dark, 2 = prefer light.
+  if command -v gdbus >/dev/null 2>&1; then
+    local portal
+    portal=$(gdbus call --session \
+      --dest org.freedesktop.portal.Desktop \
+      --object-path /org/freedesktop/portal/desktop \
+      --method org.freedesktop.portal.Settings.ReadOne \
+      org.freedesktop.appearance color-scheme 2>/dev/null)
+    case $portal in
+      *'uint32 1'*) printf 'dark\n';  return ;;
+      *'uint32 2'*) printf 'light\n'; return ;;
+    esac
+  fi
+
+  # 3. GNOME directly. color-scheme is the modern key; gtk-theme is the
+  #    fallback for desktops that never adopted it.
+  if command -v gsettings >/dev/null 2>&1; then
+    local scheme
+    scheme=$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null)
+    case $scheme in
+      *prefer-dark*)  printf 'dark\n';  return ;;
+      *prefer-light*) printf 'light\n'; return ;;
+    esac
+    local gtk
+    gtk=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null)
+    if [[ -n $gtk && $gtk != "''" ]]; then
+      [[ ${gtk,,} == *dark* ]] && { printf 'dark\n'; return; }
+      printf 'light\n'; return
+    fi
+  fi
+
+  # 4. Nothing could answer -- dark is the safer guess for a terminal.
+  printf 'dark\n'
+}
+
+read_state() { [[ -r $STATE ]] && IFS= read -r line < "$STATE" && printf '%s\n' "$line"; }
+
+write_state() {
+  mkdir -p -- "$(dirname -- "$STATE")"
+  printf '%s\n' "$1" > "$STATE"
+}
+
+case ${1-} in
+  --system) detect ;;
+  --state)  read_state ;;
+  --unpin)  write_state "$(detect)" ;;
+  --pin)
+    case ${2-} in
+      dark|light) write_state "pin:$2" ;;
+      *) printf 'usage: %s --pin dark|light\n' "${0##*/}" >&2; exit 2 ;;
+    esac
+    ;;
+  '')
+    state=$(read_state)
+    case $state in
+      pin:dark)  printf 'dark\n' ;;
+      pin:light) printf 'light\n' ;;
+      *)         detect ;;
+    esac
+    ;;
+  *) printf 'usage: %s [--system|--state|--pin dark|light|--unpin]\n' "${0##*/}" >&2; exit 2 ;;
+esac

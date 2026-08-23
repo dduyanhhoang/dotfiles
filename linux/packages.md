@@ -92,6 +92,14 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/gpakosz/.tmux/master/ins
 Order matters: run both **before** `sync.sh apply`, or their installers will
 overwrite the configs it just laid down.
 
+## Theme switching
+
+`linux/bin/` needs `~/.local/bin` on PATH (`linux/bashrc` puts it there) and
+`flock` for the watcher's single-instance lock -- part of `util-linux`, already
+present on any normal install. On a desktop Linux box, `gdbus` (from
+`glib2`/`libglib2.0-bin`) is what makes portal detection work; without it the
+detector falls back to `gsettings` and then to dark.
+
 ## gh
 
 Interactive, so it is not scripted:

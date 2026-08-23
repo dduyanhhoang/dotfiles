@@ -29,6 +29,14 @@ map=(
   'git/gitconfig.linux|'"$HOME"'/.gitconfig'
   'linux/bashrc|'"$HOME"'/.bashrc'
   'linux/tmux.conf.local|'"$HOME"'/.config/tmux/tmux.conf.local'
+  'linux/tmux/theme-dark.conf|'"$HOME"'/.config/tmux/theme-dark.conf'
+  'linux/tmux/theme-light.conf|'"$HOME"'/.config/tmux/theme-light.conf'
+  # Listed file by file on purpose. A 'linux/bin/' directory entry would mirror,
+  # and mirroring wipes the destination first -- ~/.local/bin also holds claude,
+  # uv, bob and tree-sitter, none of which this repo tracks.
+  'linux/bin/system-theme|'"$HOME"'/.local/bin/system-theme'
+  'linux/bin/tmux-theme|'"$HOME"'/.local/bin/tmux-theme'
+  'linux/bin/tmux-theme-watch|'"$HOME"'/.local/bin/tmux-theme-watch'
 )
 
 warn() { printf '\033[33mwarning:\033[0m %s\n' "$1" >&2; }

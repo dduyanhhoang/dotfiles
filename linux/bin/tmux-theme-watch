@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#
+# Follow the system dark/light setting and push changes into tmux. Started in
+# the background from tmux.conf.local; exits on its own once the server is gone.
+#
+# Linux counterpart of ~/.psmux-theme-watch.ps1. That one guards with a named
+# mutex; flock on a lockfile is the same idea -- a second copy starting from a
+# second tmux server just exits.
+#
+# Polling rather than a dbus subscription: on WSL the signal lives in the
+# Windows registry, which has nothing to subscribe to from here, so a poll is
+# needed regardless. INTERVAL matches the Windows watcher's 3 seconds.
+
+set -uo pipefail
+
+INTERVAL=${TMUX_THEME_INTERVAL:-3}
+LOCK=${XDG_RUNTIME_DIR:-/tmp}/tmux-theme-watch.lock
+themer=$(command -v tmux-theme || printf '%s' "$HOME/.local/bin/tmux-theme")
+
+exec 9>"$LOCK" || exit 0
+flock -n 9 || exit 0                          # another watcher already has it
+
+command -v tmux >/dev/null || exit 0
+
+# tmux.conf.local is sourced before the first session exists, so a has-session
+# check right now would be answered "no" and kill the watcher on startup. Wait
+# for the server to come up, then treat a missing session as a real shutdown.
+for _ in $(seq 30); do
+  tmux has-session 2>/dev/null && break
+  sleep 1
+done
+tmux has-session 2>/dev/null || exit 0
+
+while :; do
+  tmux has-session 2>/dev/null || break       # server gone -> so are we
+  "$themer" >/dev/null 2>&1
+  sleep "$INTERVAL"
+done

@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+#
+#   tmux-theme          auto (what the watcher calls): apply only on a change,
+#                       and leave a pinned choice alone
+#   tmux-theme sync     drop the pin, follow the system      (prefix + T)
+#   tmux-theme light    force light and pin it               (prefix + M-l)
+#   tmux-theme dark     force dark and pin it                (prefix + M-d)
+#   tmux-theme force    re-apply whatever is current, change or not (startup hook)
+#
+# Linux counterpart of ~/.psmux-theme.cmd, same commands and same key bindings.
+#
+# Why source-file rather than tmux_conf_theme_* variables: oh-my-tmux sources
+# tmux.conf.local and *then* runs _apply_configuration, so anything set there is
+# overwritten. Applying afterwards is the only thing that survives -- which is
+# also why the bindings below re-source themselves.
+
+set -uo pipefail
+
+CONF_DIR=${XDG_CONFIG_HOME:-$HOME/.config}/tmux
+STATE=${XDG_STATE_HOME:-$HOME/.local/state}/system-theme
+detector=$(command -v system-theme || printf '%s' "$HOME/.local/bin/system-theme")
+
+command -v tmux >/dev/null || exit 0
+tmux has-session 2>/dev/null || exit 0        # no server, nothing to restyle
+
+apply() {
+  local theme=$1
+  local file=$CONF_DIR/theme-$theme.conf
+  [[ -r $file ]] || { printf 'tmux-theme: missing %s\n' "$file" >&2; exit 1; }
+  tmux source-file "$file"
+}
+
+current_state() { [[ -r $STATE ]] && IFS= read -r l < "$STATE" && printf '%s' "$l"; }
+
+case ${1-} in
+  light|dark)
+    "$detector" --pin "$1"
+    apply "$1"
+    tmux display-message "tmux theme: $1 [pinned] - prefix+T to unpin"
+    ;;
+  sync)
+    "$detector" --unpin
+    theme=$("$detector")
+    apply "$theme"
+    tmux display-message "tmux theme: $theme [following system]"
+    ;;
+  force)
+    apply "$("$detector")"
+    ;;
+  '')
+    # Automatic path. A pin outranks the system, and an unchanged theme is a
+    # no-op so the watcher can call this every few seconds for free.
+    state=$(current_state)
+    case $state in pin:*) exit 0 ;; esac
+    theme=$("$detector" --system)
+    [[ $state == "$theme" ]] && exit 0
+    printf '%s\n' "$theme" > "$STATE"
+    apply "$theme"
+    tmux display-message "tmux theme: $theme"
+    ;;
+  *)
+    printf 'usage: %s [sync|light|dark|force]\n' "${0##*/}" >&2
+    exit 2
+    ;;
+esac
