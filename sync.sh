@@ -108,7 +108,26 @@ if [[ $mode == apply ]] && ! $dry_run; then
   # These two own ~/.bashrc and ~/.config/tmux/. Their installers overwrite what
   # apply just wrote, so they have to come first; warn if they are not there yet.
   [[ -r $HOME/.oh-my-bash/oh-my-bash.sh ]] || warn 'Oh My Bash missing -- ~/.bashrc has no prompt until it is installed'
-  [[ -e $HOME/.config/tmux/tmux.conf ]]    || warn 'Oh my tmux! missing -- tmux.conf.local has nothing to extend'
+
+  # An older Oh my tmux! installs to ~/.tmux.conf, whose sibling local file is
+  # ~/.tmux.conf.local. tmux prefers the XDG path when both exist, but with only
+  # the old one present the tmux.conf.local written above is never read -- and
+  # nothing reports that, it simply has no effect.
+  if [[ -e $HOME/.tmux.conf && ! -e $HOME/.config/tmux/tmux.conf ]]; then
+    warn 'Oh my tmux! is installed at ~/.tmux.conf -- tmux will not read ~/.config/tmux/tmux.conf.local'
+    warn '  reinstall it so it lands under ~/.config/tmux/, or copy the file to ~/.tmux.conf.local'
+  elif [[ ! -e $HOME/.config/tmux/tmux.conf ]]; then
+    warn 'Oh my tmux! missing -- tmux.conf.local has nothing to extend'
+  fi
+
+  # nvim/ needs vim.pack, which lands in 0.12. On 0.11 the config does not
+  # degrade -- it raises on PackChanged and nothing after it loads.
+  if command -v nvim >/dev/null; then
+    v=$(nvim --version | head -1 | sed 's/^NVIM v//;s/[^0-9.].*//')
+    if [[ -n $v ]] && ! printf '0.12.0\n%s\n' "$v" | sort -V -C; then
+      warn "nvim $v is too old -- nvim/ uses vim.pack and needs 0.12+ (see linux/packages.md)"
+    fi
+  fi
   printf 'open a new shell, then run :checkhealth in nvim\n'
 fi
 

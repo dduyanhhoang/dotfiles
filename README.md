@@ -131,7 +131,16 @@ Neovim is already focused in, where `FocusGained` alone would never fire.
 
 `apply` only copies config files -- it installs nothing. Work through
 `linux/packages.md` first; the warnings it prints at the end name whatever is
-still missing.
+still missing, including two failures that are otherwise silent:
+
+- **Neovim older than 0.12.** `nvim/` uses `vim.pack`, which does not exist
+  before then, so the config does not degrade gracefully -- it raises on
+  `PackChanged` and nothing after that line loads. Distro packages are usually
+  still on 0.11; install via bob.
+- **Oh my tmux! installed at `~/.tmux.conf`.** Its local file is then
+  `~/.tmux.conf.local`, and the `~/.config/tmux/tmux.conf.local` written by
+  `apply` is never read. tmux prefers the XDG path when both exist, so
+  reinstalling is the clean fix.
 
 Install Oh My Bash and Oh my tmux! **first** -- their installers overwrite
 `~/.bashrc` and `~/.config/tmux/`, so running them after `apply` undoes it.
