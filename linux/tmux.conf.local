@@ -69,7 +69,10 @@ tmux_conf_new_pane_reconnect_ssh=false
 # automatic detection relies on the COLORTERM environment variable being defined
 # to 'truecolor' or '24bit' or '$ tput colors' answering '16777216'
 # see https://github.com/termstandard/colors
-tmux_conf_24b_colour=auto
+# auto-detection fails under Windows Terminal + WSL: WT exports neither
+# COLORTERM nor a TERM whose `tput colors` answers 16777216, so tmux downgraded
+# every 24-bit colour to the 256 palette and nvim's theme shifted inside tmux.
+tmux_conf_24b_colour=true
 
 
 # -- theming -------------------------------------------------------------------

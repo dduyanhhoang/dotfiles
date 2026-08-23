@@ -80,6 +80,11 @@ Two things differ from the Windows side in ways worth knowing:
 - **Neovim comes from [bob](https://github.com/MordechaiHadad/bob), not apt.**
   This config uses `vim.pack`, which needs Neovim 0.12+; apt ships the 0.11
   series. `bob update --all` upgrades, `bob rollback` undoes a bad release.
+- **tmux needs `tmux_conf_24b_colour=true`, not `auto`.** Oh my tmux!'s
+  auto-detection looks for `COLORTERM` or a `tput colors` of 16777216; Windows
+  Terminal exports neither into WSL, so tmux never advertised `RGB` and
+  downgraded every 24-bit colour to the 256 palette -- Neovim's theme visibly
+  shifted the moment you opened tmux.
 - **WSL inherits the Windows PATH**, which puts `scoop/shims` and the Windows
   volta ahead of nothing at all -- the volta shims call a `volta` binary that
   does not exist inside WSL, so `node` and `npm` fail outright. `linux/bashrc`
