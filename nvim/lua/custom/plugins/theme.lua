@@ -13,12 +13,14 @@ local function detect()
   local pinned = vim.fn.filereadable(STATE) == 1 and (vim.fn.readfile(STATE)[1] or ''):match '^pin:(%a+)'
   if pinned then return apply(pinned) end
   -- AppsUseLightTheme: 0x1 = light, missing/0x0 = dark
+  -- WSL reaches the Windows registry through interop, but only under the exact
+  -- name `reg.exe` -- a bare `reg` is not on the Linux PATH.
+  local reg = vim.fn.has 'win32' == 1 and 'reg' or 'reg.exe'
+  if vim.fn.executable(reg) == 0 then return apply 'dark' end
   vim.system(
-    { 'reg', 'query', KEY, '/v', 'AppsUseLightTheme' },
+    { reg, 'query', KEY, '/v', 'AppsUseLightTheme' },
     { text = true },
-    vim.schedule_wrap(function(out)
-      apply((out.stdout or ''):match '0x1' and 'light' or 'dark')
-    end)
+    vim.schedule_wrap(function(out) apply((out.stdout or ''):match '0x1' and 'light' or 'dark') end)
   )
 end
 
