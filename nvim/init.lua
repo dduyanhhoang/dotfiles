@@ -503,8 +503,16 @@ do
       mappings = { i = { ['<c-enter>'] = 'to_fuzzy_refine' } },
       -- search hidden + gitignored files by default (rg needs both flags)
       vimgrep_arguments = {
-        'rg', '--color=never', '--no-heading', '--with-filename', '--line-number', '--column', '--smart-case',
-        '--hidden', '--no-ignore', '--glob=!**/.git/*',
+        'rg',
+        '--color=never',
+        '--no-heading',
+        '--with-filename',
+        '--line-number',
+        '--column',
+        '--smart-case',
+        '--hidden',
+        '--no-ignore',
+        '--glob=!**/.git/*',
       },
     },
     pickers = {
@@ -713,6 +721,29 @@ do
     -- But for many setups, the LSP (`ts_ls`) will work just fine
     -- ts_ls = {},
 
+    -- Python: pyright type-checks and completes, ruff lints and formats.
+    -- Swap to `basedpyright` for stricter inference -- same config key shape.
+    pyright = {
+      settings = {
+        -- ruff owns import sorting and lint diagnostics; pyright keeps type
+        -- checking, which ruff does not do at all.
+        pyright = { disableOrganizeImports = true },
+      },
+    },
+    ruff = {},
+
+    -- Config-file servers. yamlls ships its own SchemaStore client, so GitHub
+    -- workflows / docker-compose validate once it is switched on. jsonls has no
+    -- built-in catalog -- add b0o/schemastore.nvim if you want the same for JSON.
+    jsonls = {},
+    yamlls = {
+      settings = {
+        yaml = {
+          schemaStore = { enable = true, url = 'https://www.schemastore.org/api/json/catalog.json' },
+        },
+      },
+    },
+
     stylua = {}, -- Used to format Lua code
 
     -- Special Lua Config, as recommended by neovim help docs
@@ -809,9 +840,11 @@ do
     },
     -- You can also specify external formatters in here.
     formatters_by_ft = {
+      -- ruff replaces the old isort + black pair: `ruff_organize_imports`
+      -- sorts imports, `ruff_format` is the black-compatible formatter.
+      python = { 'ruff_organize_imports', 'ruff_format' },
       -- rust = { 'rustfmt' },
       -- Conform can also run multiple formatters sequentially
-      -- python = { "isort", "black" },
       --
       -- You can use 'stop_after_first' to run the first available formatter from the list
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
@@ -917,7 +950,10 @@ do
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
   -- Ensure basic parsers are installed
+  -- (jsonc has no parser of its own upstream -- the json one covers it)
   local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+  vim.list_extend(parsers, { 'python' })
+  vim.list_extend(parsers, { 'json', 'yaml', 'toml', 'dockerfile', 'gitignore', 'gitcommit', 'gitattributes', 'regex' })
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
