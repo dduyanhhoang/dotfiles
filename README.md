@@ -10,12 +10,20 @@ script per platform to move them either way.
 ```
 
 ```sh
-./sync.sh save     # same, from Linux/WSL
+./sync.sh save              # same, from Linux/WSL
 ./sync.sh apply
+./sync.sh apply --dry-run   # print what would be written, touch nothing
 ```
 
 Each script only touches the paths in its own map, so they never fight over the
 same file.
+
+**On a machine that is already in use**, run `apply --dry-run` first. `apply`
+overwrites `~/.bashrc`, `~/.gitconfig` and the whole of `~/.config/nvim`, and
+nothing there has git history to fall back on -- so anything it is about to
+replace is moved to `<name>.bak-<timestamp>` beside the original. Pass
+`--no-backup` to skip that. Files that already match are reported `(unchanged)`
+and left alone, so a second run neither rewrites nor re-backs-up anything.
 
 ## Shared
 
@@ -120,6 +128,10 @@ Neovim is already focused in, where `FocusGained` alone would never fire.
   WindowsApps, `code`, Warp, Codex); widen `_win_keep` there to add more back.
 
 ### New machine
+
+`apply` only copies config files -- it installs nothing. Work through
+`linux/packages.md` first; the warnings it prints at the end name whatever is
+still missing.
 
 Install Oh My Bash and Oh my tmux! **first** -- their installers overwrite
 `~/.bashrc` and `~/.config/tmux/`, so running them after `apply` undoes it.

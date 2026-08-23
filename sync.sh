@@ -14,9 +14,22 @@ set -uo pipefail
 
 mode=${1:-save}
 case $mode in
-  save|apply) ;;
-  *) printf 'usage: %s [save|apply]\n' "$0" >&2; exit 2 ;;
+  save|apply) shift ;;
+  *) printf 'usage: %s [save|apply] [--dry-run] [--no-backup]\n' "$0" >&2; exit 2 ;;
 esac
+
+dry_run=false
+backup=true
+for arg in "$@"; do
+  case $arg in
+    --dry-run)   dry_run=true ;;
+    --no-backup) backup=false ;;
+    *) printf 'usage: %s [save|apply] [--dry-run] [--no-backup]\n' "$0" >&2; exit 2 ;;
+  esac
+done
+
+# One stamp for the whole run, so a single apply's backups sort together.
+stamp=$(date +%Y%m%d%H%M%S)
 
 repo=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 
@@ -53,6 +66,28 @@ for entry in "${map[@]}"; do
 
   if [[ ! -e $src ]]; then warn "missing: $src"; continue; fi
 
+  # Nothing to do when the two already agree -- keeps a re-run from producing a
+  # drawer full of identical backups.
+  if [[ $key == */ ]]; then
+    diff -rq --exclude=.git -- "$src" "$dst" >/dev/null 2>&1 && { printf '%s (unchanged)\n' "$key"; continue; }
+  else
+    cmp -s -- "$src" "$dst" && { printf '%s (unchanged)\n' "$key"; continue; }
+  fi
+
+  # apply overwrites files this repo does not own; on a machine that was already
+  # in use that is someone's .bashrc or nvim config, and unlike the repo side it
+  # has no git history to recover from. Move it aside first.
+  note=
+  if [[ $mode == apply && $backup == true && -e $dst ]]; then
+    note=" (backed up -> ${dst##*/}.bak-$stamp)"
+    $dry_run || mv -- "$dst" "$dst.bak-$stamp"
+  fi
+
+  if $dry_run; then
+    printf '%s -> %s%s\n' "$key" "${dst/#$HOME/\~}" "$note"
+    continue
+  fi
+
   mkdir -p "$(dirname -- "$dst")"
   if [[ $key == */ ]]; then
     rm -rf -- "$dst"
@@ -62,10 +97,10 @@ for entry in "${map[@]}"; do
   else
     cp -f -- "$src" "$dst"
   fi
-  printf '%s\n' "$key"
+  printf '%s%s\n' "$key" "$note"
 done
 
-if [[ $mode == apply ]]; then
+if [[ $mode == apply ]] && ! $dry_run; then
   printf '\n'
   for c in nvim node tree-sitter gh; do
     command -v "$c" >/dev/null || warn "$c not on PATH -- see linux/packages.md"
@@ -77,4 +112,8 @@ if [[ $mode == apply ]]; then
   printf 'open a new shell, then run :checkhealth in nvim\n'
 fi
 
-printf '\n\033[32m%s done.\033[0m\n' "$mode"
+if $dry_run; then
+  printf '\n\033[32m%s dry-run -- nothing was written.\033[0m\n' "$mode"
+else
+  printf '\n\033[32m%s done.\033[0m\n' "$mode"
+fi
