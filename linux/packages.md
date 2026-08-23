@@ -1,6 +1,16 @@
 # Linux / WSL packages
 
-Everything `sync.sh apply` cannot install by copying a file. Ubuntu 26.04 on WSL2.
+Everything `sync.sh apply` cannot install by copying a file. Written against
+Ubuntu 26.04 on WSL2, which is what this is running on.
+
+**On another machine.** The tracked config files are portable as they stand:
+`linux/bashrc` derives `$OSH` from `$HOME`, skips the whole Windows-PATH block
+unless `$WSL_DISTRO_NAME` is set, guards the Oh My Bash source, and gates every
+CLI hook behind `command -v`. `nvim/`'s theme detector falls back to dark when
+no registry is reachable. What is *not* portable is this file: only the apt
+section below is Debian/Ubuntu-specific, so swap it for your package manager --
+`bob`, `volta`, `tree-sitter` and `uv` all install the same way anywhere, since
+each ships its own binary rather than a distro package.
 
 ## apt
 

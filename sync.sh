@@ -61,6 +61,10 @@ if [[ $mode == apply ]]; then
   for c in nvim node tree-sitter gh; do
     command -v "$c" >/dev/null || warn "$c not on PATH -- see linux/packages.md"
   done
+  # These two own ~/.bashrc and ~/.config/tmux/. Their installers overwrite what
+  # apply just wrote, so they have to come first; warn if they are not there yet.
+  [[ -r $HOME/.oh-my-bash/oh-my-bash.sh ]] || warn 'Oh My Bash missing -- ~/.bashrc has no prompt until it is installed'
+  [[ -e $HOME/.config/tmux/tmux.conf ]]    || warn 'Oh my tmux! missing -- tmux.conf.local has nothing to extend'
   printf 'open a new shell, then run :checkhealth in nvim\n'
 fi
 
