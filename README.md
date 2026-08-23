@@ -76,6 +76,7 @@ Installed by their own installers, not scripted here:
 | `linux/bin/system-theme` | `~/.local/bin/` -- one detector shared by tmux and Neovim |
 | `linux/bin/tmux-theme` | `~/.local/bin/` -- applies a palette; the Linux `.psmux-theme.cmd` |
 | `linux/bin/tmux-theme-watch` | `~/.local/bin/` -- polls for system theme changes |
+| `linux/bin/theme-doctor` | `~/.local/bin/` -- prints every light/dark signal and what each says |
 | `linux/packages.md` | what to install and why -- apt, bob, volta, tree-sitter, uv |
 | `git/gitconfig.linux` | `~/.gitconfig` -- same identity, native `gh` as credential helper |
 

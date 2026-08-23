@@ -37,6 +37,7 @@ map=(
   'linux/bin/system-theme|'"$HOME"'/.local/bin/system-theme'
   'linux/bin/tmux-theme|'"$HOME"'/.local/bin/tmux-theme'
   'linux/bin/tmux-theme-watch|'"$HOME"'/.local/bin/tmux-theme-watch'
+  'linux/bin/theme-doctor|'"$HOME"'/.local/bin/theme-doctor'
 )
 
 warn() { printf '\033[33mwarning:\033[0m %s\n' "$1" >&2; }

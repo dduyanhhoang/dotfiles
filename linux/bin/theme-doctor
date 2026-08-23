@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+#
+# Report every signal a terminal program can use to guess light vs dark, and
+# what each one currently says. Run it twice -- once in a plain shell, once
+# inside tmux -- when something disagrees about the theme.
+#
+# Claude Code asks the terminal for its background with OSC 11 and falls back to
+# COLORFGBG; that is what the two middle sections measure.
+
+set -uo pipefail
+
+say() { printf '\033[1m%s\033[0m\n' "$1"; }
+kv()  { printf '  %-22s %s\n' "$1" "${2:-<unset>}"; }
+
+say 'context'
+kv 'inside tmux' "${TMUX:+yes (${TMUX##*,})}${TMUX:-no}"
+kv 'TERM' "${TERM-}"
+kv 'COLORTERM' "${COLORTERM-}"
+kv 'WSL_DISTRO_NAME' "${WSL_DISTRO_NAME-}"
+
+say 'what our own detector says'
+if command -v system-theme >/dev/null; then
+  kv 'system-theme' "$(system-theme)"
+  kv 'system-theme --system' "$(system-theme --system)"
+  kv 'pin state' "$(system-theme --state)"
+else
+  kv 'system-theme' '<not installed>'
+fi
+
+say 'COLORFGBG (Claude Code fallback)'
+if [[ -z ${COLORFGBG-} ]]; then
+  kv 'COLORFGBG' '<unset -- no signal>'
+else
+  bg=${COLORFGBG##*;}
+  if [[ $bg =~ ^[0-9]+$ ]] && (( bg <= 15 )); then
+    (( bg <= 6 || bg == 8 )) && verdict=dark || verdict=light
+    kv 'COLORFGBG' "$COLORFGBG  -> bg index $bg -> $verdict"
+  else
+    kv 'COLORFGBG' "$COLORFGBG  -> unparseable, ignored"
+  fi
+fi
+
+say 'OSC 11 (what Claude Code actually prefers)'
+if [[ ! -t 0 || ! -t 1 ]]; then
+  kv 'OSC 11' '<needs a real terminal -- run this directly, not piped>'
+else
+  old=$(stty -g)
+  stty raw -echo min 0 time 10          # 1s timeout
+  printf '\033]11;?\033\\' > /dev/tty
+  reply=$(dd bs=1 count=64 2>/dev/null < /dev/tty | tr -d '\000')
+  stty "$old"
+  reply=${reply//$'\033'/}
+  if [[ -z $reply ]]; then
+    kv 'OSC 11 reply' '<none -- terminal did not answer>'
+  else
+    kv 'OSC 11 reply' "${reply//[^[:print:]]/}"
+    if [[ $reply =~ rgba?:([0-9a-fA-F]+)/([0-9a-fA-F]+)/([0-9a-fA-F]+) ]]; then
+      # Same maths Claude Code uses: relative luminance, >0.5 means light.
+      read -r r g b < <(awk -v r="${BASH_REMATCH[1]}" -v g="${BASH_REMATCH[2]}" -v b="${BASH_REMATCH[3]}" '
+        function h2d(s,  i,c,n,v){n=0;for(i=1;i<=length(s);i++){c=tolower(substr(s,i,1));
+          v=index("0123456789abcdef",c)-1;n=n*16+v} return n/(16^length(s)-1)}
+        BEGIN{printf "%.4f %.4f %.4f", h2d(r), h2d(g), h2d(b)}')
+      lum=$(awk -v r="$r" -v g="$g" -v b="$b" 'BEGIN{printf "%.4f", 0.2126*r+0.7152*g+0.0722*b}')
+      awk -v l="$lum" 'BEGIN{exit !(l>0.5)}' && verdict=light || verdict=dark
+      kv 'background rgb' "r=$r g=$g b=$b"
+      kv 'luminance' "$lum  (>0.5 = light)"
+      kv 'Claude would pick' "$verdict"
+    fi
+  fi
+fi
+
+say 'Claude Code setting'
+cfg=$HOME/.claude/settings.json
+if [[ -r $cfg ]]; then
+  kv 'theme' "$(grep -o '"theme"[^,}]*' "$cfg" | head -1 | sed 's/.*: *//;s/"//g')"
+else
+  kv 'settings.json' '<missing>'
+fi
