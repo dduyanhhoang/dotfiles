@@ -1,0 +1,16 @@
+# Linux/WSL counterpart to .gitconfig (which carries the Windows credential
+# helpers pointing at scoop's gh.exe). Same identity, native gh as the helper.
+#
+# `gh auth setup-git` writes the [credential] block itself -- it is spelled out
+# here so a fresh clone lands working without that step.
+[user]
+	name = D Duy Anh Hoang
+	email = 137117837+dduyanhhoang@users.noreply.github.com
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
+[init]
+	defaultBranch = main
