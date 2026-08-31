@@ -1,3 +1,4 @@
 *.bak
 *.bak-*
 .psmux-theme.state
+.psmux-theme-active.conf
