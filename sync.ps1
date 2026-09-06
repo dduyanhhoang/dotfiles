@@ -13,13 +13,13 @@ $ps   = "$HOME\Documents\PowerShell"
 # repo-relative path  ->  live path
 $map = [ordered]@{
   'powershell/Microsoft.PowerShell_profile.ps1' = "$ps\Microsoft.PowerShell_profile.ps1"
-  'powershell/powershell.config.json'           = "$ps\powershell.config.json"
   'psmux/.psmux.conf'                           = "$HOME\.psmux.conf"
   'psmux/.psmux-binds.conf'                     = "$HOME\.psmux-binds.conf"
   'psmux/.psmux-theme-dark.conf'                = "$HOME\.psmux-theme-dark.conf"
   'psmux/.psmux-theme-light.conf'               = "$HOME\.psmux-theme-light.conf"
   'psmux/.psmux-theme-watch.ps1'                = "$HOME\.psmux-theme-watch.ps1"
   'psmux/.psmux-theme.cmd'                      = "$HOME\.psmux-theme.cmd"
+  'psmux/.psmux-theme-pick.cmd'                 = "$HOME\.psmux-theme-pick.cmd"
   'nvim/'                                       = "$env:LOCALAPPDATA\nvim"
   'windows-terminal/settings.json'              = $wt
   'git/.gitconfig'                              = "$HOME\.gitconfig"
