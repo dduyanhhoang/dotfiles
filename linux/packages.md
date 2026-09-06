@@ -1,7 +1,7 @@
 # Linux / WSL packages
 
 Everything `sync.sh apply` cannot install by copying a file. Written against
-Ubuntu 26.04 on WSL2, which is what this is running on.
+Ubuntu 26.04, on WSL2 and on a native GNOME/Wayland desktop.
 
 **On another machine.** The tracked config files are portable as they stand:
 `linux/bashrc` derives `$OSH` from `$HOME`, skips the whole Windows-PATH block
@@ -21,7 +21,7 @@ packages -- `linux/bashrc` aliases them back.
 ```sh
 sudo apt update && sudo apt install -y \
   bat eza fd-find fzf zoxide lazygit gh \
-  ripgrep git make gcc curl unzip
+  ripgrep git make gcc curl unzip tmux
 ```
 
 ## Neovim -- via bob, not apt
