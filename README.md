@@ -80,37 +80,29 @@ Installed by their own installers, not scripted here:
 | Path | Live location / role |
 |---|---|
 | `linux/bashrc` | `~/.bashrc` -- Oh My Bash (robbyrussell), Windows-PATH filter, CLI hooks |
-| `linux/tmux.conf.local` | `~/.config/tmux/tmux.conf.local` -- Oh my tmux! user config |
-| `linux/tmux/theme-*.conf` | `~/.config/tmux/` -- dark and light palettes, ported from `psmux/` |
-| `linux/bin/system-theme` | `~/.local/bin/` -- one detector shared by tmux and Neovim |
-| `linux/bin/tmux-theme` | `~/.local/bin/` -- applies a palette; the Linux `.psmux-theme.cmd` |
-| `linux/bin/tmux-theme-watch` | `~/.local/bin/` -- polls for system theme changes |
+| `linux/tmux.conf.local` | `~/.config/tmux/tmux.conf.local` -- Oh my tmux! user config, fixed Adwaita purple palette |
+| `linux/bin/system-theme` | `~/.local/bin/` -- light/dark detector, used by Neovim |
 | `linux/bin/theme-doctor` | `~/.local/bin/` -- prints every light/dark signal and what each says |
 | `linux/packages.md` | what to install and why -- apt, bob, volta, tree-sitter, uv |
 | `git/gitconfig.linux` | `~/.gitconfig` -- same identity, native `gh` as credential helper |
 
 ### Dark / light
 
-Same bindings as psmux, so the muscle memory carries over:
+Neovim only. tmux is pinned to a fixed Adwaita purple palette that matches the
+GNOME default look, so it no longer follows the system -- the palette lives in
+`tmux_conf_theme_colour_1..17` in `linux/tmux.conf.local`.
 
 | | |
 |---|---|
-| `prefix + T` | follow the system again (drop the pin) |
-| `prefix + M-l` | force light and pin |
-| `prefix + M-d` | force dark and pin |
-| `:ThemePin light\|dark` | the same, from inside Neovim (no argument unpins) |
+| `:ThemePin light\|dark` | pin Neovim's theme (no argument unpins) |
 
 `system-theme` is the only place detection is implemented -- WSL asks the
 Windows registry through `reg.exe`, elsewhere it tries the XDG desktop portal
 (`org.freedesktop.appearance`, so GNOME and KDE both answer) and then GNOME's
 `color-scheme`/`gtk-theme` keys, falling back to dark. A pin lives in
-`~/.local/state/system-theme` and outranks all of it.
-
-tmux picks changes up from `tmux-theme-watch`, which polls every 3s -- the WSL
-signal is a registry value with nothing to subscribe to, so polling is required
-regardless, and it matches what `.psmux-theme-watch.ps1` already does. Neovim
-watches that same state file with `fs_poll`, so `prefix + M-l` retints a pane
-Neovim is already focused in, where `FocusGained` alone would never fire.
+`~/.local/state/system-theme` and outranks all of it. Neovim watches that state
+file with `fs_poll`, so a pin retints a pane it is already focused in, where
+`FocusGained` alone would never fire.
 
 ### Other differences from Windows
 
@@ -127,6 +119,37 @@ Neovim is already focused in, where `FocusGained` alone would never fire.
   does not exist inside WSL, so `node` and `npm` fail outright. `linux/bashrc`
   filters `/mnt/*` down to an allowlist (system32 for `clip.exe`, PowerShell,
   WindowsApps, `code`, Warp, Codex); widen `_win_keep` there to add more back.
+
+### Updating a machine that already has this repo
+
+```sh
+cd ~/dotfiles && git pull
+./sync.sh apply --dry-run   # read it, then run without the flag
+```
+
+`apply` only writes the paths in its map -- it never deletes a file the repo has
+dropped. When an update removes something, the stale copy stays live and keeps
+working, which is how a machine ends up quietly running the old config. Check
+what went away and delete it by hand:
+
+```sh
+git log --diff-filter=D --name-only -5
+```
+
+The last such removal was the tmux dark/light switcher. tmux is now a fixed
+purple palette, so on a machine that predates it:
+
+```sh
+rm -f ~/.config/tmux/theme-{dark,light}.conf \
+      ~/.local/bin/tmux-theme ~/.local/bin/tmux-theme-watch
+tmux set-hook -gu client-attached   # if a server is running
+pkill -f tmux-theme-watch
+tmux source-file ~/.config/tmux/tmux.conf
+```
+
+The hook and the watcher are the part that matters: both survive in a running
+tmux server and re-apply the old palette on every attach, so removing the files
+alone is not enough until the server restarts.
 
 ### New machine
 

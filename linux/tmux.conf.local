@@ -89,23 +89,23 @@ tmux_conf_24b_colour=true
 tmux_conf_theme=enabled
 
 # default theme
-tmux_conf_theme_colour_1="#080808"    # dark gray
-tmux_conf_theme_colour_2="#303030"    # gray
-tmux_conf_theme_colour_3="#8a8a8a"    # light gray
-tmux_conf_theme_colour_4="#00afff"    # light blue
-tmux_conf_theme_colour_5="#ffff00"    # yellow
-tmux_conf_theme_colour_6="#080808"    # dark gray
-tmux_conf_theme_colour_7="#e4e4e4"    # white
-tmux_conf_theme_colour_8="#080808"    # dark gray
-tmux_conf_theme_colour_9="#ffff00"    # yellow
-tmux_conf_theme_colour_10="#ff00af"   # pink
-tmux_conf_theme_colour_11="#5fff00"   # green
-tmux_conf_theme_colour_12="#8a8a8a"   # light gray
-tmux_conf_theme_colour_13="#e4e4e4"   # white
-tmux_conf_theme_colour_14="#080808"   # dark gray
-tmux_conf_theme_colour_15="#080808"   # dark gray
-tmux_conf_theme_colour_16="#d70000"   # red
-tmux_conf_theme_colour_17="#e4e4e4"   # white
+tmux_conf_theme_colour_1="#241f31"   # Adwaita dark purple-tinted base
+tmux_conf_theme_colour_2="#3d3846"   # gray, purple-tinted
+tmux_conf_theme_colour_3="#c0bfbc"   # light gray
+tmux_conf_theme_colour_4="#c061cb"   # purple2 — accent / active
+tmux_conf_theme_colour_5="#dc8add"   # purple1 — light purple
+tmux_conf_theme_colour_6="#f6f5f4"   # white
+tmux_conf_theme_colour_7="#dc8add"   # light purple
+tmux_conf_theme_colour_8="#f6f5f4"   # white
+tmux_conf_theme_colour_9="#9141ac"   # purple3
+tmux_conf_theme_colour_10="#613583"  # purple5
+tmux_conf_theme_colour_11="#813d9c"  # purple4
+tmux_conf_theme_colour_12="#c0bfbc"  # light gray
+tmux_conf_theme_colour_13="#f6f5f4"  # white
+tmux_conf_theme_colour_14="#241f31"  # dark base
+tmux_conf_theme_colour_15="#241f31"  # dark base
+tmux_conf_theme_colour_16="#613583"  # purple5
+tmux_conf_theme_colour_17="#dc8add"  # purple1
 
 # default theme (ansi)
 #tmux_conf_theme_colour_1="colour0"
@@ -148,7 +148,7 @@ tmux_conf_theme_pane_border_style=thin
 tmux_conf_theme_pane_border="$tmux_conf_theme_colour_2"
 tmux_conf_theme_pane_active_border="$tmux_conf_theme_colour_4"
 %if #{>=:#{version},3.2}
-tmux_conf_theme_pane_active_border="#{?pane_in_mode,$tmux_conf_theme_colour_9,#{?synchronize-panes,$tmux_conf_theme_colour_16,$tmux_conf_theme_colour_4}}"
+tmux_conf_theme_pane_active_border="#{?pane_in_mode,$tmux_conf_theme_colour_5,#{?synchronize-panes,#e01b24,$tmux_conf_theme_colour_4}}"
 %endif
 
 # pane indicator colours (when you hit <prefix> q)
@@ -337,7 +337,7 @@ tmux_conf_battery_bar_length="auto"
 #   - heat
 #   - "colour_full_fg,colour_empty_fg,colour_bg"
 #   - gradient(colour_fg_1,colour_fg_2,...,colour_fg_n)
-tmux_conf_battery_bar_palette="gradient"
+tmux_conf_battery_bar_palette="gradient(#613583,#6d3a90,#79409d,#8546a9,#9150b4,#9d5cbe,#a968c7,#b574d0,#c181d8,#cd8fe0,#d69ce7,#dc8add)"
 #tmux_conf_battery_bar_palette="#d70000,#e4e4e4,#000000"   # red, white, black
 #tmux_conf_battery_bar_palette="gradient(#00afff,#47a2ff,#7c91ff,#ac7afb,#d65be2,#e163df,#eb6cdd,#f475db,#ec9ff1,#eac3fe,#efe2ff,#ffffff)"
 
@@ -346,7 +346,7 @@ tmux_conf_battery_bar_palette="gradient"
 #   - heat
 #   - "colour_low,colour_half,colour_full"
 #   - gradient(colour_fg_1,colour_fg_2,...,colour_fg_n)
-tmux_conf_battery_hbar_palette="gradient"
+tmux_conf_battery_hbar_palette="#613583,#9141ac,#dc8add"
 #tmux_conf_battery_hbar_palette="#d70000,#ff5f00,#5fff00"  # red, orange, green
 #tmux_conf_battery_hbar_palette="gradient(#00afff,#47a2ff,#7c91ff,#ac7afb,#d65be2,#e163df,#eb6cdd,#f475db,#ec9ff1,#eac3fe,#efe2ff,#ffffff)"
 
@@ -359,7 +359,7 @@ tmux_conf_battery_hbar_symbols="▏ ▎ ▍ ▌ ▋ ▊ ▉ █"
 #   - heat
 #   - "colour_low,colour_half,colour_full"
 #   - gradient(colour_fg_1,colour_fg_2,...,colour_fg_n)
-tmux_conf_battery_vbar_palette="gradient"
+tmux_conf_battery_vbar_palette="#613583,#9141ac,#dc8add"
 #tmux_conf_battery_vbar_palette="#d70000,#ff5f00,#5fff00"  # red, orange, green
 #tmux_conf_battery_vbar_palette="gradient(#00afff,#47a2ff,#7c91ff,#ac7afb,#d65be2,#e163df,#eb6cdd,#f475db,#ec9ff1,#eac3fe,#efe2ff,#ffffff)"
 
@@ -483,22 +483,6 @@ tmux_conf_uninstall_plugins_on_reload=false
 #set -g @plugin 'tmux-plugins/tmux-continuum'
 #set -g @continuum-restore 'on'
 
-
-# -- system dark/light -------------------------------------------------------
-# Same bindings as the psmux side on Windows:
-#   prefix + T     follow the system again (drop the pin)
-#   prefix + M-l   force light and pin
-#   prefix + M-d   force dark and pin
-#
-# The theme has to be applied *after* oh-my-tmux, which sources this file and
-# only then runs _apply_configuration -- a plain 'set -g' here would be
-# overwritten. The client-attached hook fires late enough to win, and the
-# watcher keeps up with changes made while tmux is already running.
-bind T   run-shell -b 'tmux-theme sync'
-bind M-l run-shell -b 'tmux-theme light'
-bind M-d run-shell -b 'tmux-theme dark'
-set-hook -g client-attached 'run-shell -b "tmux-theme force"'
-run-shell -b 'tmux-theme-watch'
 
 # -- custom variables ----------------------------------------------------------
 
