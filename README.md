@@ -37,10 +37,9 @@ Byte-identical on both sides -- both sync scripts map these.
 `nvim/` is kickstart.nvim -- stripped of its tutorial prose and unused
 `lua/kickstart/plugins/*` examples -- with relative numbers, telescope searching hidden and
 gitignored files, pyright + ruff for Python, jsonls + yamlls for config files,
-and `lua/custom/plugins/theme.lua` following the Windows dark/light setting.
-Every platform difference inside it is a runtime `vim.fn.has 'win32'` branch,
-never a separate file -- including the theme detector, which reaches the
-registry as `reg` on Windows and `reg.exe` through WSL interop.
+and `tokyonight-moon` as a fixed colorscheme -- it does not follow the system
+dark/light setting. Every platform difference inside it is a runtime
+`vim.fn.has 'win32'` branch, never a separate file.
 
 Plugin versions are pinned in `nvim/nvim-pack-lock.json` (`vim.pack`'s lockfile).
 
@@ -81,44 +80,8 @@ Installed by their own installers, not scripted here:
 |---|---|
 | `linux/bashrc` | `~/.bashrc` -- Oh My Bash (robbyrussell), Windows-PATH filter, CLI hooks |
 | `linux/tmux.conf.local` | `~/.config/tmux/tmux.conf.local` -- Oh my tmux! user config, fixed Adwaita purple palette |
-| `linux/bin/system-theme` | `~/.local/bin/` -- light/dark detector, used by Neovim |
-| `linux/bin/theme-doctor` | `~/.local/bin/` -- prints every light/dark signal and what each says |
 | `linux/packages.md` | what to install and why -- apt, bob, volta, tree-sitter, uv |
 | `git/gitconfig.linux` | `~/.gitconfig` -- same identity, native `gh` as credential helper |
-
-### Dark / light
-
-Neovim only. tmux is pinned to a fixed Adwaita purple palette that matches the
-GNOME default look, so it no longer follows the system -- the palette lives in
-`tmux_conf_theme_colour_1..17` in `linux/tmux.conf.local`.
-
-| | |
-|---|---|
-| `:ThemePin light\|dark` | pin Neovim's theme (no argument unpins) |
-
-`system-theme` is the only place detection is implemented -- WSL asks the
-Windows registry through `reg.exe`, elsewhere it tries the XDG desktop portal
-(`org.freedesktop.appearance`, so GNOME and KDE both answer) and then GNOME's
-`color-scheme`/`gtk-theme` keys, falling back to dark. A pin lives in
-`~/.local/state/system-theme` and outranks all of it. Neovim watches that state
-file with `fs_poll`, so a pin retints a pane it is already focused in, where
-`FocusGained` alone would never fire.
-
-### Other differences from Windows
-
-- **Neovim comes from [bob](https://github.com/MordechaiHadad/bob), not apt.**
-  This config uses `vim.pack`, which needs Neovim 0.12+; apt ships the 0.11
-  series. `bob update --all` upgrades, `bob rollback` undoes a bad release.
-- **tmux needs `tmux_conf_24b_colour=true`, not `auto`.** Oh my tmux!'s
-  auto-detection looks for `COLORTERM` or a `tput colors` of 16777216; Windows
-  Terminal exports neither into WSL, so tmux never advertised `RGB` and
-  downgraded every 24-bit colour to the 256 palette -- Neovim's theme visibly
-  shifted the moment you opened tmux.
-- **WSL inherits the Windows PATH**, which puts `scoop/shims` and the Windows
-  volta ahead of nothing at all -- the volta shims call a `volta` binary that
-  does not exist inside WSL, so `node` and `npm` fail outright. `linux/bashrc`
-  filters `/mnt/*` down to an allowlist (system32 for `clip.exe`, PowerShell,
-  WindowsApps, `code`, Warp, Codex); widen `_win_keep` there to add more back.
 
 ### Updating a machine that already has this repo
 
@@ -136,12 +99,14 @@ what went away and delete it by hand:
 git log --diff-filter=D --name-only -5
 ```
 
-The last such removal was the tmux dark/light switcher. tmux is now a fixed
-purple palette, so on a machine that predates it:
+The last such removal was the dark/light switcher, dropped on both sides: tmux
+is a fixed purple palette now and Neovim a fixed `tokyonight-moon`. On a machine
+that predates that:
 
 ```sh
 rm -f ~/.config/tmux/theme-{dark,light}.conf \
-      ~/.local/bin/tmux-theme ~/.local/bin/tmux-theme-watch
+      ~/.local/bin/{tmux-theme,tmux-theme-watch,system-theme,theme-doctor} \
+      ~/.local/state/system-theme
 tmux set-hook -gu client-attached   # if a server is running
 pkill -f tmux-theme-watch
 tmux source-file ~/.config/tmux/tmux.conf
@@ -149,7 +114,9 @@ tmux source-file ~/.config/tmux/tmux.conf
 
 The hook and the watcher are the part that matters: both survive in a running
 tmux server and re-apply the old palette on every attach, so removing the files
-alone is not enough until the server restarts.
+alone is not enough until the server restarts. Neovim needs no cleanup: `nvim/`
+is a directory entry, and those are mirrored -- `apply` wipes the destination
+first, so a dropped file there does go away.
 
 ### New machine
 
