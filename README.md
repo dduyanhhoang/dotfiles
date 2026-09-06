@@ -34,7 +34,8 @@ Byte-identical on both sides -- both sync scripts map these.
 | `nvim/` | `%LOCALAPPDATA%\nvim` | `~/.config/nvim` |
 | `bat/config` | `~\scoop\persist\bat\config` | `~/.config/bat/config` |
 
-`nvim/` is kickstart.nvim with relative numbers, telescope searching hidden and
+`nvim/` is kickstart.nvim -- stripped of its tutorial prose and unused
+`lua/kickstart/plugins/*` examples -- with relative numbers, telescope searching hidden and
 gitignored files, pyright + ruff for Python, jsonls + yamlls for config files,
 and `lua/custom/plugins/theme.lua` following the Windows dark/light setting.
 Every platform difference inside it is a runtime `vim.fn.has 'win32'` branch,
@@ -162,5 +163,4 @@ gh auth login && gh auth setup-git
   `sync.sh` does not install packages at all -- apt needs a password prompt and
   the version managers each want their own ordering. `linux/packages.md` is the
   hand-maintained record instead.
-- `nvim/theme-check.lua` is currently an empty file.
 - Not tracked: secrets, anything under `~/.claude`, `*.bak` files, WT `state.json`.
