@@ -48,7 +48,7 @@ Plugin versions are pinned in `nvim/nvim-pack-lock.json` (`vim.pack`'s lockfile)
 | Path | Live location / role |
 |---|---|
 | `powershell/` | `~\Documents\PowerShell\` -- profile, execution policy, `modules.txt` (PSFzf) |
-| `psmux/` | `~\.psmux*.conf` -- config, binds, dark/light themes, theme watcher + `.cmd` switcher |
+| `psmux/` | `~\.psmux*` -- config, binds, fixed Adwaita blue palette, battery watcher |
 | `windows-terminal/settings.json` | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_*\LocalState\` |
 | `git/.gitconfig` | `~\.gitconfig` -- credential helpers point at scoop's `gh.exe` |
 | `scoop/scoopfile.json` | every scoop app -- `scoop export` / `scoop import` |
@@ -73,6 +73,20 @@ modules + copy every config into place. Restart the terminal after.
 
 Installed by their own installers, not scripted here:
 `irm https://claude.ai/install.ps1 | iex` (Claude Code), `irm https://astral.sh/uv/install.ps1 | iex` (uv).
+
+`apply` never deletes a file the repo has dropped, same as on Linux. The
+dark/light switcher was the last such removal; on a machine that predates it:
+
+```powershell
+psmux kill-server                       # hooks and the old watcher live in it
+Remove-Item ~\.psmux-theme-dark.conf, ~\.psmux-theme-light.conf, `
+            ~\.psmux-theme-active.conf, ~\.psmux-theme.state, `
+            ~\.psmux-theme.cmd, ~\.psmux-theme-pick.cmd, `
+            ~\.psmux-theme-watch.ps1 -EA SilentlyContinue
+```
+
+The watcher also wrote `theme` into `~\.claude\settings.json` on every switch;
+it no longer does, so set that once by hand to whatever you want.
 
 ## Linux / WSL
 
@@ -99,9 +113,9 @@ what went away and delete it by hand:
 git log --diff-filter=D --name-only -5
 ```
 
-The last such removal was the dark/light switcher, dropped on both sides: tmux
-is a fixed purple palette now and Neovim a fixed `tokyonight-moon`. On a machine
-that predates that:
+The last such removal was the dark/light switcher, dropped on all three sides:
+tmux is a fixed purple palette now, psmux a fixed blue one, and Neovim a fixed
+`tokyonight-moon`. On a Linux machine that predates that:
 
 ```sh
 rm -f ~/.config/tmux/theme-{dark,light}.conf \
