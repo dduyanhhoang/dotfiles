@@ -389,7 +389,18 @@ tmux_conf_theme_clock_style="24"
 #   - false (default)
 #   - disabled
 # on Linux, this requires xsel, xclip or wl-copy
-tmux_conf_copy_to_os_clipboard=false
+# left at false, `y` ran copy-selection-and-cancel and stopped at the tmux
+# buffer: the text pasted back with `prefix + ]` but never reached the Windows
+# clipboard, so Ctrl-V outside tmux gave whatever was there before. tmux does
+# try OSC 52 on its own (set-clipboard defaults to external), and that is the
+# only path by which this ever worked -- but it needs the outer terminal to both
+# advertise the clipboard feature and honour the escape, which Windows Terminal
+# is not dependable about. Piping does not go through the terminal at all.
+#   true rewrites every copy binding to copy-pipe through the clipboard command
+#   Oh my tmux! detects: clip.exe under WSL, wl-copy on a Wayland desktop. When
+#   it finds neither, the rewrite is skipped and `y` silently goes back to being
+#   buffer-only -- see linux/packages.md for the package that supplies wl-copy.
+tmux_conf_copy_to_os_clipboard=true
 
 
 # -- urlscan -------------------------------------------------------------------

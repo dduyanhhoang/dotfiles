@@ -132,7 +132,7 @@ Neovim is already focused in, where `FocusGained` alone would never fire.
 
 `apply` only copies config files -- it installs nothing. Work through
 `linux/packages.md` first; the warnings it prints at the end name whatever is
-still missing, including two failures that are otherwise silent:
+still missing, including three failures that are otherwise silent:
 
 - **Neovim older than 0.12.** `nvim/` uses `vim.pack`, which does not exist
   before then, so the config does not degrade gracefully -- it raises on
@@ -142,13 +142,18 @@ still missing, including two failures that are otherwise silent:
   `~/.tmux.conf.local`, and the `~/.config/tmux/tmux.conf.local` written by
   `apply` is never read. tmux prefers the XDG path when both exist, so
   reinstalling is the clean fix.
+- **No clipboard command for tmux.** `y` in copy mode is only piped to the OS
+  clipboard if Oh my tmux! can find something to pipe *to* -- `clip.exe` under
+  WSL, `wl-copy` (from `wl-clipboard`) on a Wayland desktop. With neither, `y`
+  falls back to the stock binding and copies into the tmux buffer only, which
+  looks like it worked until you press Ctrl-V somewhere else.
 
 Install Oh My Bash and Oh my tmux! **first** -- their installers overwrite
 `~/.bashrc` and `~/.config/tmux/`, so running them after `apply` undoes it.
 
 ```sh
 # see linux/packages.md for the full list and the reasoning
-sudo apt update && sudo apt install -y bat eza fd-find fzf zoxide lazygit gh ripgrep make gcc
+sudo apt update && sudo apt install -y bat eza fd-find fzf zoxide lazygit gh ripgrep make gcc wl-clipboard
 # ... oh-my-bash, oh-my-tmux, bob, volta, tree-sitter, uv ...
 git clone https://github.com/dduyanhhoang/dotfiles ~/dotfiles
 cd ~/dotfiles && ./sync.sh apply
