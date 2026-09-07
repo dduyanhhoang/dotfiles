@@ -120,6 +120,20 @@ if [[ $mode == apply ]] && ! $dry_run; then
     warn 'Oh my tmux! missing -- tmux.conf.local has nothing to extend'
   fi
 
+  # tmux_conf_copy_to_os_clipboard=true only does something if Oh my tmux! finds
+  # a command to pipe into. With none, it skips the rewrite and `y` silently goes
+  # back to copying into the tmux buffer alone -- same probe order as upstream.
+  if ! command -v xsel >/dev/null && ! command -v xclip >/dev/null \
+     && ! command -v wl-copy >/dev/null && ! command -v pbcopy >/dev/null \
+     && ! command -v clip.exe >/dev/null && [[ ! -c /dev/clipboard ]]; then
+    warn 'no clipboard command found -- tmux copy mode `y` will not reach the OS clipboard'
+    if [[ -n ${WSL_DISTRO_NAME:-} ]]; then
+      warn '  under WSL this is clip.exe: check /mnt/?/windows/system32 survived the PATH filter in ~/.bashrc'
+    else
+      warn '  install wl-clipboard (Wayland) or xsel (X11) -- see linux/packages.md'
+    fi
+  fi
+
   # nvim/ needs vim.pack, which lands in 0.12. On 0.11 the config does not
   # degrade -- it raises on PackChanged and nothing after it loads.
   if command -v nvim >/dev/null; then

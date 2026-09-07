@@ -21,8 +21,17 @@ packages -- `linux/bashrc` aliases them back.
 ```sh
 sudo apt update && sudo apt install -y \
   bat eza fd-find fzf zoxide lazygit gh \
-  ripgrep git make gcc curl unzip tmux
+  ripgrep git make gcc curl unzip tmux wl-clipboard
 ```
+
+`wl-clipboard` is only for the native Wayland desktop, and only tmux needs it.
+`tmux_conf_copy_to_os_clipboard=true` makes Oh my tmux! rewrite `y` in copy mode
+into `copy-pipe-and-cancel <clipboard command>`, and it picks that command by
+probing for one: `clip.exe` under WSL (already on PATH -- `linux/bashrc` keeps
+`/mnt/?/windows/system32` in its allowlist for exactly this), `wl-copy` on
+Wayland. Finding neither, it skips the rewrite, and `y` quietly goes back to
+copying into the tmux buffer only: `prefix + ]` pastes it back, Ctrl-V outside
+tmux does not. Nothing warns -- the binding is simply the stock one again.
 
 ## Neovim -- via bob, not apt
 
