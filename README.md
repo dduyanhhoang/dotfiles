@@ -59,7 +59,7 @@ Neovim needs `mingw`, `make` and the `tree-sitter` CLI (parser compilation,
 telescope-fzf-native) -- all three are in the scoop list.
 
 CLI tools come from scoop: psmux, oh-my-posh, eza, bat, fzf, fd, ripgrep,
-zoxide, lazygit, neovim, gh, volta, git, 7zip, curl, vscode.
+zoxide, lazygit, neovim, gh, volta, git, 7zip, curl, vscode, wezterm, btop.
 
 ### New machine
 
