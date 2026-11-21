@@ -309,15 +309,45 @@ do
   vim.pack.add { gh 'folke/tokyonight.nvim' }
   ---@diagnostic disable-next-line: missing-fields
   require('tokyonight').setup {
+    style = 'moon', -- dark
+    light_style = 'day',
     styles = {
       comments = { italic = false }, -- Disable italics in comments
     },
   }
 
-  -- Load the colorscheme here.
-  -- Like many other themes, this one has different styles, and you could load
-  -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  vim.cmd.colorscheme 'tokyonight-moon'
+  -- Follow the OS dark/light setting. Plain 'tokyonight' picks style or
+  -- light_style from 'background', and setting 'background' reloads it, so
+  -- polling the OS every 3s is all an open nvim needs to switch.
+  local theme_cmd
+  if vim.fn.has 'win32' == 1 or vim.fn.has 'wsl' == 1 then
+    -- full path under WSL: the bashrc PATH filter drops /mnt/c
+    local reg = vim.fn.has 'win32' == 1 and 'reg' or '/mnt/c/Windows/System32/reg.exe'
+    theme_cmd = { reg, 'query', [[HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize]], '/v', 'AppsUseLightTheme' }
+  elseif vim.fn.executable 'gsettings' == 1 then
+    theme_cmd = { 'gsettings', 'get', 'org.gnome.desktop.interface', 'color-scheme' }
+  end
+  if theme_cmd and vim.fn.executable(theme_cmd[1]) == 0 then theme_cmd = nil end
+
+  local function apply_theme(res)
+    if res.code ~= 0 then return end
+    local out = res.stdout or ''
+    local mode -- reg prints 0x0 / 0x1; gsettings 'prefer-dark' / 'default'
+    if out:find 'AppsUseLightTheme' then
+      mode = out:find '0x1%s' and 'light' or 'dark'
+    else
+      mode = out:find 'dark' and 'dark' or 'light'
+    end
+    if vim.o.background ~= mode then vim.o.background = mode end
+  end
+
+  if theme_cmd then apply_theme(vim.system(theme_cmd, { text = true }):wait()) end
+  vim.cmd.colorscheme 'tokyonight'
+  if theme_cmd then
+    vim.uv.new_timer():start(3000, 3000, vim.schedule_wrap(function()
+      vim.system(theme_cmd, { text = true }, vim.schedule_wrap(apply_theme))
+    end))
+  end
 
   -- Highlight todo, notes, etc in comments
   vim.pack.add { gh 'folke/todo-comments.nvim' }

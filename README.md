@@ -37,8 +37,10 @@ Byte-identical on both sides -- both sync scripts map these.
 `nvim/` is kickstart.nvim -- stripped of its tutorial prose and unused
 `lua/kickstart/plugins/*` examples -- with relative numbers, telescope searching hidden and
 gitignored files, pyright + ruff for Python, jsonls + yamlls for config files,
-and `tokyonight-moon` as a fixed colorscheme -- it does not follow the system
-dark/light setting. Every platform difference inside it is a runtime
+and tokyonight following the system dark/light setting -- `moon` when dark,
+`day` when light. It polls every 3s (`reg query AppsUseLightTheme` on Windows
+and WSL, `gsettings color-scheme` on GNOME), so an open nvim switches too.
+Every platform difference inside it is a runtime
 `vim.fn.has 'win32'` branch, never a separate file.
 
 Plugin versions are pinned in `nvim/nvim-pack-lock.json` (`vim.pack`'s lockfile).
@@ -115,8 +117,10 @@ git log --diff-filter=D --name-only -5
 ```
 
 The last such removal was the dark/light switcher, dropped on all three sides:
-tmux is a fixed purple palette now, psmux a fixed blue one, and Neovim a fixed
-`tokyonight-moon`. On a Linux machine that predates that:
+tmux is a fixed purple palette now and psmux a fixed blue one. (Neovim later
+went back to following the system, but on its own -- it reads the OS setting
+directly and needs none of the files below.) On a Linux machine that predates
+that:
 
 ```sh
 rm -f ~/.config/tmux/theme-{dark,light}.conf \
