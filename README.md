@@ -52,7 +52,6 @@ Plugin versions are pinned in `nvim/nvim-pack-lock.json` (`vim.pack`'s lockfile)
 | `powershell/` | `~\Documents\PowerShell\` -- profile, execution policy, `modules.txt` (PSFzf) |
 | `psmux/` | `~\.psmux*` -- config, binds, fixed Adwaita blue palette, battery watcher |
 | `windows-terminal/settings.json` | `%LOCALAPPDATA%\Packages\Microsoft.WindowsTerminal_*\LocalState\` |
-| `wezterm/.wezterm.lua` | `~\.wezterm.lua` -- pwsh, no title bar or tab bar, Catppuccin following dark/light |
 | `git/.gitconfig` | `~\.gitconfig` -- credential helpers point at scoop's `gh.exe` |
 | `scoop/scoopfile.json` | every scoop app -- `scoop export` / `scoop import` |
 | `winget/apps.txt` | winget-only apps (Nerd Font, Terminal, PowerShell 7, PowerToys, Warp) |
@@ -61,7 +60,7 @@ Neovim needs `mingw`, `make` and the `tree-sitter` CLI (parser compilation,
 telescope-fzf-native) -- all three are in the scoop list.
 
 CLI tools come from scoop: psmux, oh-my-posh, eza, bat, fzf, fd, ripgrep,
-zoxide, lazygit, neovim, gh, volta, git, 7zip, curl, vscode, wezterm, btop.
+zoxide, lazygit, neovim, gh, volta, git, 7zip, curl, vscode, btop.
 
 ### New machine
 

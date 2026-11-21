@@ -188,13 +188,6 @@
             "Source": "extras"
         },
         {
-            "Updated": "2026-09-06T18:22:38.4473329+07:00",
-            "Version": "20240203-110809-5046fc22",
-            "Name": "wezterm",
-            "Info": "",
-            "Source": "extras"
-        },
-        {
             "Updated": "2026-08-22T12:51:54.4211563+07:00",
             "Version": "0.10.0",
             "Name": "zoxide",
