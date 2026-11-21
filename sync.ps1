@@ -19,6 +19,7 @@ $map = [ordered]@{
   'psmux/.psmux-battery-watch.ps1'              = "$HOME\.psmux-battery-watch.ps1"
   'nvim/'                                       = "$env:LOCALAPPDATA\nvim"
   'windows-terminal/settings.json'              = $wt
+  'wezterm/.wezterm.lua'                        = "$HOME\.wezterm.lua"
   'git/.gitconfig'                              = "$HOME\.gitconfig"
   'bat/config'                                  = "$HOME\scoop\persist\bat\config"
 }
